@@ -27,10 +27,10 @@ RUN chmod +x /entrypoint.sh
 
 RUN mkdir -p /opt/tmpfs
 RUN chown mysql: /opt/tmpfs -R
-RUN mysql_install_db --user=mysql --basedir=/usr/local/mysql --datadir=/opt/tmpfs 
+RUN mysql_install_db --user=mysql --basedir=/usr/local/mysql --datadir=/opt/tmpfs
 
 COPY setup.sql /var/tmp/setup.sql
-RUN mysqld --user=mysql & sleep 10 && mysql -e 'source /var/tmp/setup.sql' && killall mysqld && rm /var/tmp/setup.sql
+RUN mysqld --user=mysql & sleep 10 && (mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -u root mysql) && mysql -e 'source /var/tmp/setup.sql' && killall mysqld && rm /var/tmp/setup.sql
 
 EXPOSE 3306
 CMD ["mysqld", "--datadir=/opt/tmpfs", "--user=mysql"]
